@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html class="h-full bg-white" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Next Rebel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./assets/consts.js"></script>
+  </head>
+
+  <body
+    class="h-full bg-cover"
+    style="background-image: url('https://i.imgur.com/2iKccFg.jpg')"
+  >
+    <div
+      class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8"
+    >
+      <div
+        class="sm:mx-auto sm:w-full sm:max-w-sm bg-slate-800 bg-opacity-30 w-1/2 p-4 rounded-xl shadow-xl"
+      >
+        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+          <img
+            class="mx-auto h-30 w-auto"
+            src="https://i.imgur.com/NFaGpWs.png"
+            alt="Next Rebel"
+          />
+        </div>
+
+        <div class="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
+          <form id="login" class="space-y-5" method="POST">
+            <div>
+              <label
+                htmlFor="email"
+                class="block text-sm font-medium leading-3 text-white"
+              >
+                Email address
+              </label>
+              <div class="mt-2">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  required
+                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between">
+                <label
+                  htmlFor="password"
+                  class="block text-sm font-medium leading-3 text-white"
+                >
+                  Password
+                </label>
+              </div>
+              <div class="mt-2">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                class="flex w-full justify-center rounded-md bg-purple-900 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-purple-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-900"
+              >
+                Sign in
+              </button>
+            </div>
+          </form>
+          <p id="error" class="text-md text-red-500"></p>
+
+          <p class="mt-5 text-center text-sm text-white">
+            Don't have an account?
+            <a
+              href="signup.html"
+              class="font-semibold leading-6 text-white hover:text-purple-900"
+            >
+              Sign Up
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="./assets/auth.js"></script>
+</html>

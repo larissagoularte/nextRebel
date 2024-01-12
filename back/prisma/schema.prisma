@@ -1,0 +1,152 @@
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  profile   Profile?
+  createdAt DateTime @default(now())
+}
+
+model Profile {
+  id      String   @id @default(uuid())
+  bio     String?
+  name    String
+  user    User     @relation(fields: [userId], references: [id])
+  userId  String   @unique
+  xp      Int
+  gender  String //feminino, masculino, outro(?), influencia no avatar 
+  wins    Int?     @default(0)
+  loses   Int?     @default(0)
+  quits   Int?     @default(0)
+  deaths  Int?     @default(0)
+  players Player[]
+}
+
+enum Aura {
+  GOOD
+  EVIL
+  UNKNOWN
+}
+
+enum Turn {
+  LOBBY
+  DAY
+  VOTE
+  NIGHT
+}
+
+enum Team {
+  GOVERNMENT
+  REBEL
+  SOLO
+}
+
+model Room {
+  id                  String    @id @default(uuid())
+  turn                Turn      @default(LOBBY) //dia discussao votacao ou noite
+  turnNumber          Int       @default(0) //numero do turno
+  startedAt           DateTime?
+  hasVote             Boolean //se tem votaçao no dia ou nao
+  voteAnon            Boolean //se os votos do dia sao anonimos ou nao
+  finished            Boolean
+  winner              Team?
+  soloWinner          String?
+  actualTurnStartedAt DateTime?
+  players             Player[]
+  messages            Message[]
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  content   String   @db.VarChar(255)
+  room      Room     @relation(fields: [roomId], references: [id])
+  roomId    String
+  author    Player   @relation(fields: [authorId], references: [id])
+  authorId  String
+}
+
+enum EliminatedBy {
+  VOTE
+  ATTACK
+  OVERDOSE
+}
+
+enum InjectionType {
+  ATTACK
+  DEFENSE
+}
+
+enum PotionType {
+  RED
+  BLACK
+}
+
+model Player {
+  id                              String         @id @default(uuid())
+  room                            Room           @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId                          String
+  profile                         Profile        @relation(fields: [profileId], references: [id])
+  profileId                       String
+  socketId                        String?
+  messages                        Message[]
+  canTalk                         Boolean        @default(true)
+  index                           Int
+  voteIn                          Int?
+  life                            Int            @default(1)
+  shield                          Int            @default(1)
+  isProtected                     Boolean        @default(false)
+  alive                           Boolean        @default(true)
+  revived                         Boolean        @default(false)
+  online                          Boolean        @default(true)
+  role                            Role?          @relation(fields: [roleId], references: [id])
+  roleId                          String?
+  votesReceived                   Int            @default(0)
+  voteWeight                      Int            @default(1) //peso do voto
+  roleVisibility                  Boolean        @default(false) //indica se a role esta revelada para os outros jogadores ou nao
+  elimination                     EliminatedBy? //se foi eliminado por votação ou ataque
+  isJailed                        Boolean        @default(false) //indica se o jogador foi preso pelo 'interrogador'
+  isTrapped                       Boolean        @default(false) //indica se o 'desenvolvedor de malware' colocou sua armadilha
+  roleStolen                      Boolean        @default(false) //a role "Ladra de Rua" rouba a role de outros jogadores
+  isDrugged                       Boolean        @default(false) //indica se o jogador foi drogado pela role 'traficante'
+  druggedBy                       Boolean        @default(false) //indica se o jogador foi drogado pela role 'traficante'
+  injected                        InjectionType?
+  voteProtection                  Boolean        @default(false) //impede de ser eliminado por votação
+  roleVisibilityProtectedWhenDead Boolean        @default(false) //esconde a role quando for eliminado
+  corrupted                       Boolean        @default(false) //corrompe e impede de falar e votar
+  bhTarget                        Boolean        @default(false) //guarda o index do alvo da role 'caçador de recompensas'
+  potionReceived                  PotionType?
+  attackedBy                      Int? //index do time ou aura de quem matou
+  abilitiesEnabled                Boolean        @default(true)
+  canVote                         Boolean        @default(true)
+  checkedByAnalyst                Boolean        @default(false)
+  checkedByDetective              Boolean        @default(false)
+  vigiKill                        Boolean        @default(false)
+  vigiReveal                      Boolean        @default(false)
+  abilityConsumed                 Boolean        @default(false)
+  attacked                        Boolean        @default(false)
+  trapActive                      Boolean        @default(false)
+  playerTrapped                   String?
+  soldierAttacked                 Boolean        @default(false)
+}
+
+model Role {
+  id           String   @id @default(uuid())
+  aura         Aura
+  team         Team
+  canTalkNight Boolean
+  description  String   @db.VarChar(3000)
+  name         String
+  image        String?
+  players      Player[]
+}
